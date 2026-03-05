@@ -145,4 +145,5 @@ def chat():
     reply = get_bot_reply(user_input)
     return jsonify({"reply": reply})
 
-
+if __name__ == "__main__":
+    app.run(debug=True)

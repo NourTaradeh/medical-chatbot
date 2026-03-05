@@ -1,0 +1,1753 @@
+<!DOCTYPE html>
+
+<html lang="ar" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>المساعد الطبي الذكي</title>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800;900&display=swap"
+        rel="stylesheet">
+    <style>
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        ```:root {
+            --primary: #1e6fff;
+            --primary-dark: #1454d4;
+            --accent: #00c9a7;
+            --text-dark: #0d1f3c;
+            --text-mid: #4a6080;
+            --text-light: #8da4c0;
+            --border: #dce8f8;
+            --r-xl: 26px;
+            --r-lg: 16px;
+            --r-md: 12px;
+            --r-pill: 50px;
+        }
+
+        html,
+        body {
+            height: 100%;
+            font-family: 'Tajawal', sans-serif;
+            overflow: hidden;
+        }
+
+        body {
+            background: #0b1623;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+            background:
+                radial-gradient(ellipse 70% 50% at 15% 50%, rgba(30, 111, 255, 0.22) 0%, transparent 70%),
+                radial-gradient(ellipse 60% 45% at 85% 30%, rgba(0, 201, 167, 0.16) 0%, transparent 70%),
+                radial-gradient(ellipse 80% 60% at 50% 80%, rgba(20, 84, 212, 0.18) 0%, transparent 70%);
+        }
+
+        body::after {
+            content: '';
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+            background-image:
+                url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100'%3E%3Cg fill='none' stroke='rgba(255,255,255,0.035)' stroke-width='1'%3E%3Crect x='38' y='18' width='24' height='64' rx='5'/%3E%3Crect x='18' y='38' width='64' height='24' rx='5'/%3E%3C/g%3E%3C/svg%3E");
+            background-size: 100px 100px;
+            animation: bgDrift 40s linear infinite;
+        }
+
+        @keyframes bgDrift {
+            to {
+                background-position: 100px 100px;
+            }
+        }
+
+        /* ── FLOATING ICONS ── */
+        .fi {
+            position: fixed;
+            z-index: 1;
+            opacity: 0.65;
+            filter: drop-shadow(0 0 12px rgba(30, 111, 255, 0.55));
+            animation: floatIcon 7s ease-in-out infinite;
+        }
+
+        .fi-1 {
+            width: 50px;
+            top: 7%;
+            left: 2%;
+            animation-delay: 0s;
+        }
+
+        .fi-2 {
+            width: 42px;
+            top: 30%;
+            left: 4%;
+            animation-delay: 3.5s;
+        }
+
+        .fi-3 {
+            width: 36px;
+            top: 60%;
+            left: 2%;
+            animation-delay: 1.8s;
+        }
+
+        .fi-4 {
+            width: 44px;
+            top: 82%;
+            left: 5%;
+            animation-delay: 5s;
+        }
+
+        .fi-5 {
+            width: 50px;
+            top: 7%;
+            right: 2%;
+            animation-delay: 2.5s;
+        }
+
+        .fi-6 {
+            width: 42px;
+            top: 30%;
+            right: 4%;
+            animation-delay: 1s;
+        }
+
+        .fi-7 {
+            width: 36px;
+            top: 60%;
+            right: 2%;
+            animation-delay: 4.2s;
+        }
+
+        .fi-8 {
+            width: 44px;
+            top: 82%;
+            right: 5%;
+            animation-delay: 0.8s;
+        }
+
+        @keyframes floatIcon {
+
+            0%,
+            100% {
+                transform: translateY(0) rotate(0deg);
+            }
+
+            50% {
+                transform: translateY(-16px) rotate(3deg);
+            }
+        }
+
+        /* ═══════════════════════════════
+   MAIN LAYOUT — 3 columns
+═══════════════════════════════ */
+        .layout {
+            position: relative;
+            z-index: 2;
+            display: flex;
+            align-items: flex-start;
+            gap: 18px;
+        }
+
+        /* ═══════════════════════════════
+   LEFT PANEL — Live Stats
+═══════════════════════════════ */
+        .panel {
+            width: 210px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .panel-title {
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 10.5px;
+            font-weight: 700;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            padding-right: 4px;
+            margin-bottom: -4px;
+        }
+
+        /* Live Stats Card */
+        .stats-card {
+            background: rgba(255, 255, 255, 0.06);
+            border: 1px solid rgba(255, 255, 255, 0.10);
+            border-radius: var(--r-lg);
+            backdrop-filter: blur(12px);
+            padding: 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 11px;
+        }
+
+        .stats-card-title {
+            font-size: 12px;
+            font-weight: 800;
+            color: rgba(255, 255, 255, 0.85);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            padding-bottom: 9px;
+            margin-bottom: 2px;
+        }
+
+        .stat-row {
+            display: flex;
+            flex-direction: column;
+            gap: 3px;
+        }
+
+        .stat-label {
+            font-size: 10.5px;
+            color: rgba(255, 255, 255, 0.5);
+            font-weight: 500;
+        }
+
+        .stat-value {
+            font-size: 20px;
+            font-weight: 900;
+            color: #fff;
+            font-variant-numeric: tabular-nums;
+            letter-spacing: -0.5px;
+            transition: color 0.3s;
+        }
+
+        .stat-value.tick {
+            color: #4fffb0;
+        }
+
+        .stat-bar {
+            height: 3px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            margin-top: 2px;
+            overflow: hidden;
+        }
+
+        .stat-bar-fill {
+            height: 100%;
+            border-radius: 10px;
+            background: linear-gradient(90deg, var(--primary), var(--accent));
+            transition: width 1s ease;
+        }
+
+        .stat-icon {
+            font-size: 13px;
+        }
+
+        /* Daily Tip Card */
+        .tip-card {
+            background: linear-gradient(135deg, rgba(30, 111, 255, 0.18), rgba(0, 201, 167, 0.12));
+            border: 1px solid rgba(30, 111, 255, 0.22);
+            border-radius: var(--r-lg);
+            backdrop-filter: blur(12px);
+            padding: 14px 15px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .tip-card::before {
+            content: '';
+            position: absolute;
+            top: -20px;
+            left: -20px;
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(30, 111, 255, 0.25), transparent 70%);
+        }
+
+        .tip-card-header {
+            display: flex;
+            align-items: center;
+            gap: 7px;
+            margin-bottom: 9px;
+        }
+
+        .tip-badge {
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            color: #fff;
+            font-size: 10px;
+            font-weight: 800;
+            padding: 3px 9px;
+            border-radius: 30px;
+        }
+
+        .tip-date {
+            font-size: 10px;
+            color: rgba(255, 255, 255, 0.45);
+            margin-right: auto;
+        }
+
+        .tip-text {
+            font-size: 12.5px;
+            color: rgba(255, 255, 255, 0.88);
+            line-height: 1.65;
+            font-weight: 500;
+            position: relative;
+            z-index: 1;
+        }
+
+        .tip-icon {
+            font-size: 22px;
+            margin-bottom: 7px;
+            display: block;
+        }
+
+        /* Right panel — same structure */
+        .panel-right {
+            width: 210px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        /* Body stats card (right) */
+        .body-card {
+            background: rgba(255, 255, 255, 0.06);
+            border: 1px solid rgba(255, 255, 255, 0.10);
+            border-radius: var(--r-lg);
+            backdrop-filter: blur(12px);
+            padding: 16px;
+        }
+
+        .body-card-title {
+            font-size: 12px;
+            font-weight: 800;
+            color: rgba(255, 255, 255, 0.85);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            padding-bottom: 9px;
+            margin-bottom: 12px;
+        }
+
+        .body-stat {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 7px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .body-stat:last-child {
+            border-bottom: none;
+        }
+
+        .body-stat-left {
+            display: flex;
+            align-items: center;
+            gap: 7px;
+        }
+
+        .body-stat-icon {
+            width: 28px;
+            height: 28px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 13px;
+        }
+
+        .bsi-red {
+            background: rgba(239, 68, 68, 0.2);
+        }
+
+        .bsi-blue {
+            background: rgba(30, 111, 255, 0.2);
+        }
+
+        .bsi-green {
+            background: rgba(34, 197, 94, 0.2);
+        }
+
+        .bsi-yel {
+            background: rgba(234, 179, 8, 0.2);
+        }
+
+        .body-stat-name {
+            font-size: 11px;
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .body-stat-val {
+            font-size: 13px;
+            font-weight: 800;
+            color: #fff;
+        }
+
+        /* Quote card */
+        .quote-card {
+            background: linear-gradient(135deg, rgba(0, 201, 167, 0.15), rgba(30, 111, 255, 0.10));
+            border: 1px solid rgba(0, 201, 167, 0.2);
+            border-radius: var(--r-lg);
+            backdrop-filter: blur(12px);
+            padding: 14px 15px;
+        }
+
+        .quote-mark {
+            font-size: 30px;
+            color: var(--accent);
+            line-height: 1;
+            margin-bottom: 4px;
+            display: block;
+            opacity: 0.7;
+        }
+
+        .quote-text {
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.82);
+            line-height: 1.7;
+            font-style: italic;
+            font-weight: 500;
+        }
+
+        .quote-author {
+            font-size: 10.5px;
+            color: rgba(255, 255, 255, 0.4);
+            margin-top: 8px;
+            text-align: left;
+        }
+
+        /* ═══════════════════════════════
+   CHAT CONTAINER — wider
+═══════════════════════════════ */
+        .chat-wrap {
+            width: 520px;
+            display: flex;
+            flex-direction: column;
+            border-radius: var(--r-xl);
+            overflow: hidden;
+            background: #fff;
+            position: relative;
+            box-shadow: 0 30px 80px rgba(0, 0, 0, 0.5), 0 0 0 1.5px rgba(255, 255, 255, 0.12), 0 0 0 4px rgba(30, 111, 255, 0.18);
+        }
+
+        .chat-wrap::before {
+            content: '';
+            position: absolute;
+            inset: -1px;
+            border-radius: 27px;
+            background: linear-gradient(135deg, rgba(30, 111, 255, 0.7), rgba(0, 201, 167, 0.4), rgba(30, 111, 255, 0.6));
+            z-index: -1;
+            animation: borderGlow 4s ease-in-out infinite;
+        }
+
+        @keyframes borderGlow {
+
+            0%,
+            100% {
+                opacity: .5
+            }
+
+            50% {
+                opacity: 1
+            }
+        }
+
+        /* HEADER */
+        .chat-header {
+            background: linear-gradient(135deg, #0f3fa8 0%, #1e6fff 55%, #2f86ff 100%);
+            padding: 13px 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .chat-header::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='60'%3E%3Cg fill='none' stroke='rgba(255,255,255,0.06)' stroke-width='1'%3E%3Crect x='20' y='8' width='20' height='44' rx='4'/%3E%3Crect x='8' y='20' width='44' height='20' rx='4'/%3E%3C/g%3E%3C/svg%3E");
+            background-size: 60px;
+        }
+
+        .hdr-left {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .hdr-av {
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.15);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.08);
+        }
+
+        .hdr-av img {
+            width: 24px;
+            filter: brightness(0) invert(1);
+        }
+
+        .hdr-name {
+            font-size: 16px;
+            font-weight: 800;
+            color: #fff;
+        }
+
+        .hdr-status {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 11px;
+            color: rgba(255, 255, 255, 0.88);
+            margin-top: 1px;
+        }
+
+        .online-dot {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: #4fffb0;
+            box-shadow: 0 0 6px #4fffb0;
+            animation: onlinePulse 1.8s ease-in-out infinite;
+        }
+
+        @keyframes onlinePulse {
+
+            0%,
+            100% {
+                opacity: 1
+            }
+
+            50% {
+                opacity: .4
+            }
+        }
+
+        .hdr-actions {
+            display: flex;
+            gap: 7px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .hdr-btn {
+            background: rgba(255, 255, 255, 0.14);
+            border: 1px solid rgba(255, 255, 255, 0.28);
+            color: #fff;
+            border-radius: var(--r-md);
+            padding: 7px 12px;
+            font-size: 12px;
+            font-weight: 700;
+            font-family: 'Tajawal', sans-serif;
+            cursor: pointer;
+            transition: background 0.2s;
+            white-space: nowrap;
+        }
+
+        .hdr-btn:hover {
+            background: rgba(255, 255, 255, 0.28);
+        }
+
+        /* HISTORY PANEL */
+        .history-panel {
+            display: none;
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 100%;
+            height: 100%;
+            background: #fff;
+            z-index: 10;
+            border-radius: var(--r-xl);
+            flex-direction: column;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(30px);
+                opacity: 0
+            }
+
+            to {
+                transform: translateX(0);
+                opacity: 1
+            }
+        }
+
+        .history-panel.open {
+            display: flex;
+        }
+
+        .hp-header {
+            background: linear-gradient(135deg, #0f3fa8, #1e6fff);
+            padding: 14px 16px;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .hp-title {
+            font-size: 16px;
+            font-weight: 800;
+        }
+
+        .hp-close {
+            background: rgba(255, 255, 255, 0.18);
+            border: 1px solid rgba(255, 255, 255, 0.28);
+            color: #fff;
+            border-radius: 8px;
+            width: 32px;
+            height: 32px;
+            font-size: 16px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .hp-list {
+            flex: 1;
+            overflow-y: auto;
+            padding: 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .hp-list::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        .hp-list::-webkit-scrollbar-thumb {
+            background: rgba(30, 111, 255, 0.3);
+            border-radius: 10px;
+        }
+
+        .hp-empty {
+            text-align: center;
+            color: var(--text-light);
+            font-size: 13px;
+            margin-top: 40px;
+        }
+
+        .hp-item {
+            border: 1.5px solid var(--border);
+            border-radius: var(--r-md);
+            padding: 10px 13px;
+            cursor: pointer;
+            transition: all 0.2s;
+            background: #f8fbff;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 8px;
+        }
+
+        .hp-item:hover {
+            background: #e8f2ff;
+            border-color: rgba(30, 111, 255, 0.4);
+            transform: translateX(-2px);
+        }
+
+        .hp-item-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .hp-item-title {
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--text-dark);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .hp-item-date {
+            font-size: 11px;
+            color: var(--text-light);
+            margin-top: 2px;
+        }
+
+        .hp-item-del {
+            background: none;
+            border: none;
+            color: #ef4444;
+            font-size: 15px;
+            cursor: pointer;
+            padding: 4px;
+            border-radius: 6px;
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+
+        .hp-item:hover .hp-item-del {
+            opacity: 1;
+        }
+
+        .hp-new-btn {
+            margin: 10px 12px 12px;
+            background: linear-gradient(135deg, #1454d4, #1e6fff);
+            color: #fff;
+            border: none;
+            border-radius: var(--r-md);
+            padding: 12px;
+            font-size: 14px;
+            font-weight: 800;
+            font-family: 'Tajawal', sans-serif;
+            cursor: pointer;
+            box-shadow: 0 4px 14px rgba(30, 111, 255, 0.4);
+            transition: all 0.2s;
+        }
+
+        .hp-new-btn:hover {
+            opacity: .9;
+            transform: translateY(-1px);
+        }
+
+        /* CHAT BODY */
+        .chat-body {
+            height: 440px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            padding: 18px 16px;
+            background-color: #e4f0ff;
+            background-image:
+                radial-gradient(ellipse 55% 40% at 10% 15%, rgba(30, 111, 255, 0.20) 0%, transparent 65%),
+                radial-gradient(ellipse 50% 45% at 90% 85%, rgba(0, 201, 167, 0.18) 0%, transparent 65%),
+                url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='70' height='70'%3E%3Cg fill='%231e6fff' opacity='0.05'%3E%3Crect x='27' y='10' width='16' height='50' rx='4'/%3E%3Crect x='10' y='27' width='50' height='16' rx='4'/%3E%3C/g%3E%3C/svg%3E");
+            background-size: auto, auto, 70px 70px;
+        }
+
+        .chat-body::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        .chat-body::-webkit-scrollbar-thumb {
+            background: rgba(30, 111, 255, 0.3);
+            border-radius: 10px;
+        }
+
+        /* WELCOME */
+        .welcome {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            text-align: center;
+            animation: riseIn 0.7s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        @keyframes riseIn {
+            from {
+                opacity: 0;
+                transform: scale(0.85) translateY(20px)
+            }
+
+            to {
+                opacity: 1;
+                transform: scale(1) translateY(0)
+            }
+        }
+
+        @keyframes fallOut {
+            to {
+                opacity: 0;
+                transform: scale(0.9) translateY(-20px)
+            }
+        }
+
+        .welcome-glow {
+            width: 86px;
+            height: 86px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #c8dfff, #a0c8ff);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 14px;
+            box-shadow: 0 0 0 10px rgba(30, 111, 255, 0.10), 0 0 0 20px rgba(30, 111, 255, 0.05), 0 8px 30px rgba(30, 111, 255, 0.25);
+            animation: glowPulse 3s ease-in-out infinite;
+        }
+
+        @keyframes glowPulse {
+
+            0%,
+            100% {
+                box-shadow: 0 0 0 10px rgba(30, 111, 255, 0.10), 0 0 0 20px rgba(30, 111, 255, 0.05), 0 8px 30px rgba(30, 111, 255, 0.25)
+            }
+
+            50% {
+                box-shadow: 0 0 0 14px rgba(30, 111, 255, 0.16), 0 0 0 28px rgba(30, 111, 255, 0.06), 0 12px 40px rgba(30, 111, 255, 0.38)
+            }
+        }
+
+        .welcome-glow img {
+            width: 46px;
+        }
+
+        .welcome-title {
+            font-size: 22px;
+            font-weight: 900;
+            color: var(--text-dark);
+            margin-bottom: 7px;
+        }
+
+        .welcome-sub {
+            font-size: 13px;
+            color: var(--text-mid);
+            line-height: 1.75;
+            max-width: 290px;
+            margin-bottom: 15px;
+        }
+
+        .chips-row {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin-bottom: 16px;
+        }
+
+        .chip {
+            padding: 5px 12px;
+            border-radius: var(--r-pill);
+            font-size: 11.5px;
+            font-weight: 700;
+            border: 1.5px solid;
+        }
+
+        .chip-b {
+            color: var(--primary);
+            border-color: rgba(30, 111, 255, 0.3);
+            background: rgba(30, 111, 255, 0.07);
+        }
+
+        .chip-g {
+            color: #059669;
+            border-color: rgba(5, 150, 105, 0.3);
+            background: rgba(5, 150, 105, 0.07);
+        }
+
+        .chip-t {
+            color: #0891b2;
+            border-color: rgba(8, 145, 178, 0.3);
+            background: rgba(8, 145, 178, 0.07);
+        }
+
+        .welcome-suggestions {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin-bottom: 18px;
+        }
+
+        .ws-btn {
+            background: #fff;
+            border: 1.5px solid rgba(30, 111, 255, 0.3);
+            color: var(--primary);
+            border-radius: var(--r-pill);
+            padding: 7px 15px;
+            font-size: 12.5px;
+            font-weight: 700;
+            font-family: 'Tajawal', sans-serif;
+            cursor: pointer;
+            transition: all 0.22s;
+            box-shadow: 0 2px 8px rgba(30, 111, 255, 0.12);
+        }
+
+        .ws-btn:hover {
+            background: var(--primary);
+            color: #fff;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 18px rgba(30, 111, 255, 0.4);
+        }
+
+        .start-btn {
+            position: relative;
+            overflow: hidden;
+            background: linear-gradient(135deg, #0a2d8f, #1e6fff, #38a0ff);
+            background-size: 200% 200%;
+            animation: btnShift 3s ease infinite;
+            color: #fff;
+            border: none;
+            padding: 16px 48px;
+            border-radius: var(--r-pill);
+            font-size: 18px;
+            font-weight: 900;
+            font-family: 'Tajawal', sans-serif;
+            letter-spacing: 0.5px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 0 10px 35px rgba(30, 111, 255, 0.60), inset 0 1px 0 rgba(255, 255, 255, 0.25), 0 0 0 3px rgba(30, 111, 255, 0.2);
+            transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.3s ease;
+            text-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        @keyframes btnShift {
+
+            0%,
+            100% {
+                background-position: 0% 50%
+            }
+
+            50% {
+                background-position: 100% 50%
+            }
+        }
+
+        .start-btn:hover {
+            transform: translateY(-4px) scale(1.06);
+            box-shadow: 0 18px 45px rgba(30, 111, 255, 0.70), inset 0 1px 0 rgba(255, 255, 255, 0.25);
+        }
+
+        .start-btn:active {
+            transform: scale(0.96);
+        }
+
+        .start-btn .ripple {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.35);
+            transform: scale(0);
+            animation: rippleAnim .65s linear;
+            pointer-events: none;
+        }
+
+        @keyframes rippleAnim {
+            to {
+                transform: scale(5);
+                opacity: 0
+            }
+        }
+
+        .btn-em {
+            font-size: 20px;
+            animation: wag 2.5s ease-in-out infinite;
+        }
+
+        @keyframes wag {
+
+            0%,
+            100% {
+                transform: rotate(0)
+            }
+
+            20% {
+                transform: rotate(-14deg)
+            }
+
+            40% {
+                transform: rotate(14deg)
+            }
+
+            60% {
+                transform: rotate(0)
+            }
+        }
+
+        /* MESSAGES */
+        #msgArea {
+            display: none;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .inline-suggestions {
+            display: flex;
+            gap: 7px;
+            flex-wrap: wrap;
+            padding: 4px 0 6px 36px;
+        }
+
+        .is-btn {
+            background: rgba(255, 255, 255, 0.92);
+            border: 1.5px solid rgba(30, 111, 255, 0.3);
+            color: var(--primary);
+            border-radius: var(--r-pill);
+            padding: 6px 13px;
+            font-size: 12px;
+            font-weight: 700;
+            font-family: 'Tajawal', sans-serif;
+            cursor: pointer;
+            transition: all 0.22s;
+            box-shadow: 0 2px 8px rgba(30, 111, 255, 0.12);
+            white-space: nowrap;
+        }
+
+        .is-btn:hover {
+            background: var(--primary);
+            color: #fff;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(30, 111, 255, 0.4);
+        }
+
+        .is-btn.used {
+            opacity: 0.45;
+            cursor: not-allowed;
+            pointer-events: none;
+        }
+
+        .msg {
+            display: flex;
+            align-items: flex-end;
+            gap: 7px;
+            animation: msgIn 0.35s cubic-bezier(0.34, 1.4, 0.64, 1);
+        }
+
+        @keyframes msgIn {
+            from {
+                opacity: 0;
+                transform: translateY(14px) scale(0.95)
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1)
+            }
+        }
+
+        .msg-av {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            flex-shrink: 0;
+            object-fit: cover;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+        }
+
+        .msg-col {
+            display: flex;
+            flex-direction: column;
+            max-width: 70%;
+        }
+
+        .bubble {
+            padding: 10px 14px;
+            font-size: 13.5px;
+            line-height: 1.65;
+            word-break: break-word;
+        }
+
+        .msg-bot .bubble {
+            background: #fff;
+            color: var(--text-dark);
+            border-radius: 18px 18px 18px 4px;
+            box-shadow: 0 3px 14px rgba(0, 0, 0, 0.10);
+        }
+
+        .msg-user {
+            flex-direction: row-reverse;
+        }
+
+        .msg-user .bubble {
+            background: linear-gradient(135deg, #1454d4 0%, #1e6fff 60%, #3d8eff 100%);
+            color: #ffffff !important;
+            font-weight: 600;
+            border-radius: 18px 18px 4px 18px;
+            box-shadow: 0 6px 20px rgba(30, 111, 255, 0.45);
+            text-shadow: 0 1px 3px rgba(0, 0, 0, 0.18);
+        }
+
+        .msg-time {
+            font-size: 10px;
+            color: var(--text-light);
+            margin-top: 4px;
+            padding: 0 5px;
+        }
+
+        .msg-user .msg-time {
+            text-align: left;
+        }
+
+        .msg-actions {
+            display: flex;
+            gap: 5px;
+            margin-top: 5px;
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+
+        .msg:hover .msg-actions {
+            opacity: 1;
+        }
+
+        .act-btn {
+            background: rgba(255, 255, 255, 0.88);
+            border: 1px solid var(--border);
+            border-radius: 7px;
+            padding: 2px 8px;
+            font-size: 12px;
+            cursor: pointer;
+            color: var(--text-mid);
+            font-family: 'Tajawal', sans-serif;
+            transition: all 0.2s;
+        }
+
+        .act-btn:hover {
+            background: var(--primary);
+            color: #fff;
+            border-color: var(--primary);
+        }
+
+        .act-btn.voted {
+            background: #f0fdf4;
+            color: #16a34a;
+            border-color: #86efac;
+        }
+
+        .date-div {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 11px;
+            color: var(--text-light);
+            margin: 6px 0;
+        }
+
+        .date-div::before,
+        .date-div::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: rgba(30, 111, 255, 0.18);
+        }
+
+        .typing-bubble {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            padding: 12px 16px;
+            background: #fff;
+            border-radius: 18px 18px 18px 4px;
+            width: fit-content;
+            box-shadow: 0 3px 14px rgba(0, 0, 0, 0.10);
+        }
+
+        .td {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: var(--primary);
+            animation: tdB 1.1s ease-in-out infinite;
+        }
+
+        .td:nth-child(2) {
+            animation-delay: .18s
+        }
+
+        .td:nth-child(3) {
+            animation-delay: .36s
+        }
+
+        @keyframes tdB {
+
+            0%,
+            60%,
+            100% {
+                transform: translateY(0);
+                opacity: .6
+            }
+
+            30% {
+                transform: translateY(-7px);
+                opacity: 1
+            }
+        }
+
+        /* INPUT */
+        .input-row {
+            display: flex;
+            align-items: center;
+            background: #fff;
+            border-top: 1px solid var(--border);
+            padding: 10px 12px;
+        }
+
+        .msg-input {
+            flex: 1;
+            background: #f0f6ff;
+            border: 1.5px solid transparent;
+            border-radius: var(--r-lg);
+            padding: 12px 16px;
+            font-size: 13.5px;
+            font-family: 'Tajawal', sans-serif;
+            color: var(--text-dark);
+            outline: none;
+            transition: border-color .2s, background .2s;
+        }
+
+        .msg-input:focus {
+            border-color: rgba(30, 111, 255, 0.4);
+            background: #e8f2ff;
+        }
+
+        .msg-input::placeholder {
+            color: var(--text-light);
+        }
+
+        .msg-input:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .send-btn {
+            width: 48px;
+            height: 48px;
+            border-radius: 14px;
+            background: linear-gradient(135deg, #0f3fa8, #1e6fff);
+            color: #fff;
+            border: none;
+            cursor: pointer;
+            margin-right: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 6px 20px rgba(30, 111, 255, 0.55), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+            transition: all .22s cubic-bezier(0.34, 1.56, 0.64, 1);
+            flex-shrink: 0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .send-btn::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.18), transparent);
+        }
+
+        .send-btn svg {
+            width: 22px;
+            height: 22px;
+            position: relative;
+            z-index: 1;
+            transition: transform .2s;
+        }
+
+        .send-btn:hover {
+            transform: scale(1.10) translateY(-1px);
+            box-shadow: 0 10px 28px rgba(30, 111, 255, 0.65);
+        }
+
+        .send-btn:hover svg {
+            transform: translateX(-3px);
+        }
+
+        .send-btn:active {
+            transform: scale(0.93);
+        }
+
+        .send-btn:disabled {
+            opacity: .35;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        @media (max-width:1100px) {
+
+            .panel,
+            .panel-right {
+                display: none;
+            }
+
+            .layout {
+                justify-content: center;
+            }
+
+            .fi {
+                display: none;
+            }
+        }
+
+        ```
+    </style>
+</head>
+
+<body>
+
+    <img class="fi fi-1" src="https://cdn-icons-png.flaticon.com/512/2966/2966480.png" alt="">
+    <img class="fi fi-2" src="https://cdn-icons-png.flaticon.com/512/2491/2491913.png" alt="">
+    <img class="fi fi-3" src="https://cdn-icons-png.flaticon.com/512/4320/4320337.png" alt="">
+    <img class="fi fi-4" src="https://cdn-icons-png.flaticon.com/512/3209/3209053.png" alt="">
+    <img class="fi fi-5" src="https://cdn-icons-png.flaticon.com/512/2785/2785482.png" alt="">
+    <img class="fi fi-6" src="https://cdn-icons-png.flaticon.com/512/2382/2382533.png" alt="">
+    <img class="fi fi-7" src="https://cdn-icons-png.flaticon.com/512/3209/3209265.png" alt="">
+    <img class="fi fi-8" src="https://cdn-icons-png.flaticon.com/512/387/387561.png" alt="">
+
+    <div class="layout">
+
+        ```
+        <!-- ══ LEFT — Live Stats + Daily Tip ══ -->
+        <div class="panel">
+            <div class="panel-title">📊 إحصائيات حية</div>
+
+            <div class="stats-card">
+                <div class="stats-card-title">💓 جسمك الآن</div>
+
+                <div class="stat-row">
+                    <div class="stat-label">نبضات قلبك منذ فتح الصفحة</div>
+                    <div class="stat-value" id="heartbeats">0</div>
+                    <div class="stat-bar">
+                        <div class="stat-bar-fill" id="hbBar" style="width:60%"></div>
+                    </div>
+                </div>
+
+                <div class="stat-row">
+                    <div class="stat-label">أنفاس أخذتها منذ فتح الصفحة</div>
+                    <div class="stat-value" id="breaths">0</div>
+                    <div class="stat-bar">
+                        <div class="stat-bar-fill" id="brBar"
+                            style="width:30%;background:linear-gradient(90deg,#00c9a7,#38a0ff)"></div>
+                    </div>
+                </div>
+
+                <div class="stat-row">
+                    <div class="stat-label">خلايا دم حمراء جديدة اليوم</div>
+                    <div class="stat-value" id="redcells">0</div>
+                    <div class="stat-bar">
+                        <div class="stat-bar-fill" id="rcBar"
+                            style="width:45%;background:linear-gradient(90deg,#ef4444,#f97316)"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="tip-card">
+                <div class="tip-card-header">
+                    <span class="tip-badge">نصيحة اليوم</span>
+                    <span class="tip-date" id="tipDate"></span>
+                </div>
+                <span class="tip-icon" id="tipIcon"></span>
+                <div class="tip-text" id="tipText"></div>
+            </div>
+        </div>
+
+        <!-- ══ CHAT ══ -->
+        <div class="chat-wrap">
+
+            <!-- History Panel -->
+            <div class="history-panel" id="historyPanel">
+                <div class="hp-header">
+                    <div class="hp-title">📂 المحادثات المحفوظة</div>
+                    <button class="hp-close" onclick="closeHistory()">✕</button>
+                </div>
+                <div class="hp-list" id="historyList"></div>
+                <button class="hp-new-btn" onclick="newChatFromHistory()">＋ محادثة جديدة</button>
+            </div>
+
+            <!-- Header -->
+            <div class="chat-header">
+                <div class="hdr-left">
+                    <div class="hdr-av"><img src="https://cdn-icons-png.flaticon.com/512/2382/2382533.png" alt=""></div>
+                    <div>
+                        <div class="hdr-name">المساعد الطبي الذكي</div>
+                        <div class="hdr-status"><span class="online-dot"></span> متصل الآن</div>
+                    </div>
+                </div>
+                <div class="hdr-actions">
+                    <button class="hdr-btn" onclick="openHistory()">📂 المحادثات</button>
+                    <button class="hdr-btn" onclick="clearChat()">🗑 مسح</button>
+                </div>
+            </div>
+
+            <!-- Chat Body -->
+            <div class="chat-body" id="chatBody">
+                <div class="welcome" id="welcomeScreen">
+                    <div class="welcome-glow"><img src="https://cdn-icons-png.flaticon.com/512/2382/2382533.png" alt="">
+                    </div>
+                    <div class="welcome-title">مرحباً بك 👋</div>
+                    <div class="welcome-sub">أنا مساعدك الطبي الذكي. اسألني عن أي شيء يخص صحتك وسأجاوبك بمعلومات موثوقة.
+                    </div>
+                    <div class="chips-row">
+                        <span class="chip chip-b">🔒 آمن وسري</span>
+                        <span class="chip chip-g">✅ موثوق</span>
+                        <span class="chip chip-t">⚡ فوري</span>
+                    </div>
+                    <div class="welcome-suggestions">
+                        <button class="ws-btn" onclick="startChatWithQ(this)">🤧 عندي زكام، شو أعمل؟</button>
+                        <button class="ws-btn" onclick="startChatWithQ(this)">🌡️ متى تكون الحرارة خطرة؟</button>
+                        <button class="ws-btn" onclick="startChatWithQ(this)">💊 هل آخذ مسكّن مع المضاد؟</button>
+                    </div>
+                    <button class="start-btn" id="startBtn" onclick="startChat(event)">
+                        <span class="btn-em">💬</span> ابدأ المحادثة
+                    </button>
+                </div>
+                <div id="msgArea"></div>
+            </div>
+
+            <!-- Input -->
+            <div class="input-row">
+                <button class="send-btn" id="sendBtn" onclick="sendMessage()" disabled>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <line x1="22" y1="2" x2="11" y2="13" />
+                        <polygon points="22 2 15 22 11 13 2 9 22 2" />
+                    </svg>
+                </button>
+                <input class="msg-input" id="msgInput" placeholder="اكتب سؤالك الطبي..." disabled>
+            </div>
+        </div>
+
+        <!-- ══ RIGHT — Body Stats + Quote ══ -->
+        <div class="panel-right">
+            <div class="panel-title">🩺 معايير الجسم</div>
+
+            <div class="body-card">
+                <div class="body-card-title">📋 القيم الطبيعية</div>
+                <div class="body-stat">
+                    <div class="body-stat-left">
+                        <div class="body-stat-icon bsi-red">❤️</div>
+                        <div class="body-stat-name">ضغط الدم</div>
+                    </div>
+                    <div class="body-stat-val">120/80</div>
+                </div>
+                <div class="body-stat">
+                    <div class="body-stat-left">
+                        <div class="body-stat-icon bsi-blue">🌡️</div>
+                        <div class="body-stat-name">درجة الحرارة</div>
+                    </div>
+                    <div class="body-stat-val">37°C</div>
+                </div>
+                <div class="body-stat">
+                    <div class="body-stat-left">
+                        <div class="body-stat-icon bsi-red">💓</div>
+                        <div class="body-stat-name">نبضات القلب</div>
+                    </div>
+                    <div class="body-stat-val">60–100</div>
+                </div>
+                <div class="body-stat">
+                    <div class="body-stat-left">
+                        <div class="body-stat-icon bsi-green">🩸</div>
+                        <div class="body-stat-name">سكر الدم (صيام)</div>
+                    </div>
+                    <div class="body-stat-val">70–100</div>
+                </div>
+                <div class="body-stat">
+                    <div class="body-stat-left">
+                        <div class="body-stat-icon bsi-blue">💧</div>
+                        <div class="body-stat-name">الماء اليومي</div>
+                    </div>
+                    <div class="body-stat-val">8 أكواب</div>
+                </div>
+                <div class="body-stat">
+                    <div class="body-stat-left">
+                        <div class="body-stat-icon bsi-yel">😴</div>
+                        <div class="body-stat-name">النوم الصحي</div>
+                    </div>
+                    <div class="body-stat-val">7–9 ساعات</div>
+                </div>
+            </div>
+
+            <div class="quote-card">
+                <span class="quote-mark">"</span>
+                <div class="quote-text" id="quoteText"></div>
+                <div class="quote-author" id="quoteAuthor"></div>
+            </div>
+        </div>
+        ```
+
+    </div>
+
+    <script>
+        const $ = id => document.getElementById(id);
+        const nowStr = () => new Date().toLocaleTimeString('ar-SA', { hour: '2-digit', minute: '2-digit' });
+        const dateStr = () => new Date().toLocaleDateString('ar-SA', { weekday: 'long', day: 'numeric', month: 'long' });
+
+        let suggShown = false;
+        let firstMsgSent = false;
+
+        /* ═══════════════════════════
+           LIVE STATS
+        ═══════════════════════════ */
+        const startTime = Date.now();
+        const HB_PER_SEC = 1.17;   // ~70 bpm
+        const BR_PER_SEC = 0.267;  // ~16 breaths/min
+        const RC_PER_SEC = 2400000; // 2.4M red cells / sec
+
+        function updateStats() {
+            const elapsed = (Date.now() - startTime) / 1000;
+            const hb = Math.floor(elapsed * HB_PER_SEC);
+            const br = Math.floor(elapsed * BR_PER_SEC);
+            const rc = Math.floor(elapsed * RC_PER_SEC);
+
+            $('heartbeats').textContent = hb.toLocaleString('ar-SA');
+            $('breaths').textContent = br.toLocaleString('ar-SA');
+            $('redcells').textContent = rc.toLocaleString('ar-SA');
+
+            // pulse bar
+            const pulse = (Math.sin(elapsed * 1.8) + 1) / 2;
+            $('hbBar').style.width = (50 + pulse * 40) + '%';
+        }
+        setInterval(updateStats, 500);
+        updateStats();
+
+        /* ═══════════════════════════
+           DAILY TIP
+        ═══════════════════════════ */
+        const tips = [
+            { icon: '💧', text: 'اشرب كوباً من الماء فور استيقاظك، يساعد في تنشيط الجهاز الهضمي وتحسين التركيز.' },
+            { icon: '🚶', text: 'المشي 30 دقيقة يومياً يقلل خطر أمراض القلب بنسبة 35% ويحسن المزاج.' },
+            { icon: '😴', text: 'النوم قبل الساعة 11 مساءً يزيد إفراز هرمون النمو ويقوي الجهاز المناعي.' },
+            { icon: '🥦', text: 'تناول 5 حصص من الخضار والفواكه يومياً يقلل خطر السرطان والأمراض المزمنة.' },
+            { icon: '🧘', text: '10 دقائق تأمل يومياً تخفض مستوى الكورتيزول وتقلل التوتر بشكل ملحوظ.' },
+            { icon: '🦷', text: 'تفريش الأسنان مرتين يومياً والخيط يقلل خطر أمراض القلب بطريقة غير مباشرة.' },
+            { icon: '☀️', text: '15 دقيقة تعرض لأشعة الشمس صباحاً تنظم الساعة البيولوجية وترفع مستوى فيتامين D.' },
+        ];
+        const today = new Date();
+        const tipIdx = today.getDay();
+        const tip = tips[tipIdx];
+        $('tipIcon').textContent = tip.icon;
+        $('tipText').textContent = tip.text;
+        $('tipDate').textContent = today.toLocaleDateString('ar-SA', { weekday: 'long' });
+
+        /* ═══════════════════════════
+           HEALTH QUOTES
+        ═══════════════════════════ */
+        const quotes = [
+            { text: 'الصحة تاج على رؤوس الأصحاء لا يراه إلا المرضى.', author: '— مثل عربي' },
+            { text: 'جسمك يسمعك، أحسن الإصغاء إليه قبل أن يُجبرك على ذلك.', author: '— حكمة طبية' },
+            { text: 'الوقاية خير من ألف علاج.', author: '— مثل عالمي' },
+            { text: 'اهتم بجسمك فهو المكان الوحيد الذي ستعيش فيه طوال حياتك.', author: '— جيم رون' },
+            { text: 'النوم الجيد هو نصف الصحة، والطعام الجيد نصفها الآخر.', author: '— حكمة طبية' },
+        ];
+        const q = quotes[today.getDate() % quotes.length];
+        $('quoteText').textContent = q.text;
+        $('quoteAuthor').textContent = q.author;
+
+        /* ═══════════════════════════
+           HISTORY
+        ═══════════════════════════ */
+        function getHistory() { try { return JSON.parse(localStorage.getItem('chatHistory') || '[]'); } catch { return []; } }
+        function saveHistory(a) { localStorage.setItem('chatHistory', JSON.stringify(a)); }
+
+        function saveCurrent() {
+            const html = $('msgArea').innerHTML; if (!html.trim()) return;
+            const hist = getHistory();
+            const sid = sessionStorage.getItem('chatSid');
+            const idx = hist.findIndex(h => h.id === sid);
+            const tmp = document.createElement('div'); tmp.innerHTML = html;
+            const fu = tmp.querySelector('.msg-user .bubble');
+            const title = fu ? fu.textContent.trim().slice(0, 40) : 'محادثة جديدة';
+            const entry = { id: sid, title, date: new Date().toISOString(), html };
+            if (idx >= 0) hist[idx] = entry; else hist.unshift(entry);
+            saveHistory(hist.slice(0, 30));
+        }
+
+        function openHistory() { saveCurrent(); renderHistoryList(); $('historyPanel').classList.add('open'); }
+        function closeHistory() { $('historyPanel').classList.remove('open'); }
+
+        function renderHistoryList() {
+            const list = $('historyList');
+            const hist = getHistory();
+            if (!hist.length) { list.innerHTML = '<div class="hp-empty">لا توجد محادثات محفوظة بعد</div>'; return; }
+            list.innerHTML = hist.map(h => `
+        <div class="hp-item" onclick="loadConversation('${h.id}')">
+          <div class="hp-item-info">
+            <div class="hp-item-title">${h.title}</div>
+            <div class="hp-item-date">${new Date(h.date).toLocaleDateString('ar-SA', { day: 'numeric', month: 'long', hour: '2-digit', minute: '2-digit' })}</div>
+          </div>
+          <button class="hp-item-del" onclick="deleteConversation(event,'${h.id}')">🗑</button>
+        </div>`).join('');
+        }
+
+        function loadConversation(id) {
+            const entry = getHistory().find(h => h.id === id); if (!entry) return;
+            closeHistory();
+            $('welcomeScreen').style.display = 'none';
+            $('msgArea').style.display = 'flex';
+            $('msgArea').innerHTML = entry.html;
+            $('msgInput').disabled = false; $('sendBtn').disabled = false;
+            firstMsgSent = true; suggShown = true;
+            sessionStorage.setItem('chatSid', id);
+            sessionStorage.setItem('started', '1');
+            scrollEnd();
+        }
+
+        function deleteConversation(e, id) {
+            e.stopPropagation();
+            saveHistory(getHistory().filter(h => h.id !== id));
+            renderHistoryList();
+        }
+
+        function newChatFromHistory() { closeHistory(); clearChat(); }
+
+        /* ═══════════════════════════
+           CHAT CONTROL
+        ═══════════════════════════ */
+        function scrollEnd() { $('chatBody').scrollTo({ top: $('chatBody').scrollHeight, behavior: 'smooth' }); }
+        function genSid() { return Date.now().toString(36) + Math.random().toString(36).slice(2); }
+
+        function startChat(e, preQ) {
+            if (e) {
+                const btn = $('startBtn'), r = document.createElement('span'); r.className = 'ripple';
+                const rect = btn.getBoundingClientRect(), s = Math.max(rect.width, rect.height);
+                Object.assign(r.style, { width: s + 'px', height: s + 'px', left: (e.clientX - rect.left - s / 2) + 'px', top: (e.clientY - rect.top - s / 2) + 'px' });
+                btn.appendChild(r); setTimeout(() => r.remove(), 700);
+            }
+            $('welcomeScreen').style.animation = 'fallOut 0.35s ease forwards';
+            setTimeout(() => {
+                $('welcomeScreen').style.display = 'none';
+                $('msgArea').style.display = 'flex';
+                $('msgInput').disabled = false; $('sendBtn').disabled = false;
+                if (!sessionStorage.getItem('chatSid')) sessionStorage.setItem('chatSid', genSid());
+                sessionStorage.setItem('started', '1');
+                addDateDivider();
+                appendBot('مرحباً 👋 أنا المساعد الطبي الذكي. كيف يمكنني مساعدتك اليوم؟', true);
+                if (preQ) setTimeout(() => { $('msgInput').value = preQ; sendMessage(); }, 400);
+                else $('msgInput').focus();
+            }, 360);
+        }
+
+        function startChatWithQ(btn) { startChat(null, btn.textContent.replace(/^\S+\s/, '').trim()); }
+
+        function clearChat() {
+            saveCurrent();
+            $('msgArea').innerHTML = ''; $('msgArea').style.display = 'none';
+            $('msgInput').disabled = true; $('sendBtn').disabled = true;
+            $('msgInput').value = '';
+            suggShown = false; firstMsgSent = false;
+            sessionStorage.removeItem('started'); sessionStorage.removeItem('chatSid');
+            const ws = $('welcomeScreen');
+            ws.style.display = 'flex'; ws.style.animation = 'riseIn 0.6s cubic-bezier(0.34,1.56,0.64,1)';
+        }
+
+        function addDateDivider() {
+            const d = document.createElement('div'); d.className = 'date-div';
+            d.textContent = dateStr(); $('msgArea').appendChild(d);
+        }
+
+        function appendBot(text, withSugg = false) {
+            const area = $('msgArea');
+            const div = document.createElement('div'); div.className = 'msg msg-bot';
+            div.innerHTML = `
+        <img class="msg-av" src="https://cdn-icons-png.flaticon.com/512/2382/2382533.png" alt="">
+        <div class="msg-col">
+          <div class="bubble">${text}</div>
+          <div class="msg-actions">
+            <button class="act-btn" onclick="copyMsg(this)">📋 نسخ</button>
+            <button class="act-btn vote-up"   onclick="vote(this)">👍</button>
+            <button class="act-btn vote-down" onclick="vote(this)">👎</button>
+          </div>
+          <div class="msg-time">${nowStr()}</div>
+        </div>`;
+            area.appendChild(div);
+            if (withSugg && !suggShown) {
+                suggShown = true;
+                const sd = document.createElement('div'); sd.className = 'inline-suggestions'; sd.id = 'inlineSugg';
+                sd.innerHTML = `
+          <button class="is-btn" onclick="quickSend(this)">🤧 عندي زكام، شو أعمل؟</button>
+          <button class="is-btn" onclick="quickSend(this)">🌡️ متى تكون الحرارة خطرة؟</button>
+          <button class="is-btn" onclick="quickSend(this)">💊 هل آخذ مسكّن مع المضاد؟</button>
+          <button class="is-btn" onclick="quickSend(this)">🩺 ما أعراض ارتفاع ضغط الدم؟</button>
+          <button class="is-btn" onclick="quickSend(this)">🚑 متى يجب التوجه للطوارئ؟</button>`;
+                area.appendChild(sd);
+            }
+            scrollEnd(); playNotif(); saveCurrent();
+        }
+
+        function copyMsg(btn) {
+            navigator.clipboard.writeText(btn.closest('.msg-col').querySelector('.bubble').innerText)
+                .then(() => { btn.textContent = '✅ تم'; setTimeout(() => btn.textContent = '📋 نسخ', 2200); });
+        }
+
+        function vote(btn) {
+            btn.closest('.msg-actions').querySelectorAll('.act-btn').forEach(b => { b.classList.remove('voted'); b.style.opacity = '0.45'; });
+            btn.classList.add('voted'); btn.style.opacity = '1';
+        }
+
+        function quickSend(btn) {
+            $('msgInput').value = btn.textContent.replace(/^\S+\s/, '').trim();
+            sendMessage();
+        }
+
+        async function sendMessage() {
+            const input = $('msgInput'), text = input.value.trim(); if (!text) return;
+            if (!firstMsgSent) {
+                firstMsgSent = true;
+                document.querySelectorAll('.is-btn').forEach(b => b.classList.add('used'));
+            }
+            const area = $('msgArea');
+            const uDiv = document.createElement('div'); uDiv.className = 'msg msg-user';
+            uDiv.innerHTML = `
+        <div class="msg-col">
+          <div class="bubble">${text}</div>
+          <div class="msg-time">${nowStr()}</div>
+        </div>
+        <img class="msg-av" src="https://cdn-icons-png.flaticon.com/512/1077/1077012.png" alt="">`;
+            area.appendChild(uDiv); input.value = ''; scrollEnd();
+
+            const tDiv = document.createElement('div'); tDiv.className = 'msg msg-bot'; tDiv.id = 'typing';
+            tDiv.innerHTML = `
+        <img class="msg-av" src="https://cdn-icons-png.flaticon.com/512/2382/2382533.png" alt="">
+        <div class="typing-bubble"><span class="td"></span><span class="td"></span><span class="td"></span></div>`;
+            area.appendChild(tDiv); scrollEnd();
+
+            try {
+                const res = await fetch('/chat', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ message: text }) });
+                const data = await res.json();
+                $('typing')?.remove(); appendBot(data.reply);
+            } catch {
+                $('typing')?.remove(); appendBot('عذراً، حدث خطأ في الاتصال. يرجى المحاولة مرة أخرى. 🔄');
+            }
+            saveCurrent();
+        }
+
+        function playNotif() {
+            try {
+                const ctx = new (window.AudioContext || window.webkitAudioContext)();
+                const o = ctx.createOscillator(), g = ctx.createGain();
+                o.connect(g); g.connect(ctx.destination);
+                o.type = 'sine'; o.frequency.value = 880;
+                g.gain.setValueAtTime(0.07, ctx.currentTime);
+                g.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 0.3);
+                o.start(ctx.currentTime); o.stop(ctx.currentTime + 0.3);
+            } catch (_) { }
+        }
+
+        $('msgInput').addEventListener('keypress', e => { if (e.key === 'Enter') sendMessage(); });
+
+        /* ═══ INIT ═══ */
+        window.addEventListener('load', () => {
+            if (sessionStorage.getItem('started') === '1') {
+                const sid = sessionStorage.getItem('chatSid');
+                const saved = getHistory().find(h => h.id === sid);
+                $('welcomeScreen').style.display = 'none';
+                $('msgArea').style.display = 'flex';
+                $('msgInput').disabled = false; $('sendBtn').disabled = false;
+                firstMsgSent = true; suggShown = true;
+                if (saved) { $('msgArea').innerHTML = saved.html; scrollEnd(); }
+                else { addDateDivider(); appendBot('مرحباً مجدداً 👋 كيف يمكنني مساعدتك اليوم؟'); }
+            }
+        });
+    </script>
+
+</body>
+
+</html>

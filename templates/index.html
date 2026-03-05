@@ -1973,25 +1973,35 @@
         }
 
         async function sendMessage() {
-            async function sendMessage() {
-  const userMessage = document.getElementById("userInput").value;
+            const input = $('msgInput'), text = input.value.trim(); if (!text) return;
+            if (!firstMsgSent) {
+                firstMsgSent = true;
+                document.querySelectorAll('.is-btn').forEach(b => b.classList.add('used'));
+            }
+            const area = $('msgArea');
+            const uDiv = document.createElement('div'); uDiv.className = 'msg msg-user';
+            uDiv.innerHTML = `
+        <div class="msg-col">
+          <div class="bubble">${text}</div>
+          <div class="msg-time">${nowStr()}</div>
+        </div>
+        <img class="msg-av" src="https://cdn-icons-png.flaticon.com/512/1077/1077012.png" alt="">`;
+            area.appendChild(uDiv); input.value = ''; scrollEnd();
 
-  try {
-    const response = await fetch("https://medical-chatbot.sigam-sandy.vercel.app/chat", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({ message: userMessage })
-    });
+            const tDiv = document.createElement('div'); tDiv.className = 'msg msg-bot'; tDiv.id = 'typing';
+            tDiv.innerHTML = `
+        <img class="msg-av" src="https://cdn-icons-png.flaticon.com/512/2382/2382533.png" alt="">
+        <div class="typing-bubble"><span class="td"></span><span class="td"></span><span class="td"></span></div>`;
+            area.appendChild(tDiv); scrollEnd();
 
-    const data = await response.json();
-    document.getElementById("chatBox").innerHTML += "<p><b>Bot:</b> " + data.reply + "</p>";
-  } catch (error) {
-    document.getElementById("chatBox").innerHTML += "<p><b>Bot:</b> عذرًا حدث خطأ في الاتصال</p>";
-  }
-}
-
+            try {
+                const res = await fetch('/chat', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ message: text }) });
+                const data = await res.json();
+                $('typing')?.remove(); appendBot(data.reply);
+            } catch {
+                $('typing')?.remove(); appendBot('عذراً، حدث خطأ في الاتصال. يرجى المحاولة مرة أخرى. 🔄');
+            }
+            saveCurrent();
         }
 
         function playNotif() {

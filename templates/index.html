@@ -1271,6 +1271,9 @@
             box-shadow: none;
         }
 
+        /* ═══════════════════════════════
+   TABLET
+═══════════════════════════════ */
         @media (max-width:1100px) {
 
             .panel,
@@ -1285,6 +1288,258 @@
             .fi {
                 display: none;
             }
+
+            .chat-wrap {
+                width: 92vw;
+                max-width: 600px;
+            }
+        }
+
+        /* ═══════════════════════════════
+   MOBILE — full redesign
+═══════════════════════════════ */
+        @media (max-width:600px) {
+
+            html,
+            body {
+                overflow: hidden;
+                height: 100%;
+            }
+
+            body {
+                align-items: flex-start;
+            }
+
+            .layout {
+                width: 100vw;
+                height: 100dvh;
+                flex-direction: column;
+                gap: 0;
+                overflow: hidden;
+            }
+
+            /* chat takes full screen */
+            .chat-wrap {
+                width: 100vw;
+                max-width: 100vw;
+                height: 100dvh;
+                border-radius: 0;
+                box-shadow: none;
+                display: flex;
+                flex-direction: column;
+            }
+
+            .chat-wrap::before {
+                display: none;
+            }
+
+            /* header mobile */
+            .chat-header {
+                padding: 10px 14px;
+            }
+
+            .hdr-av {
+                width: 36px;
+                height: 36px;
+            }
+
+            .hdr-av img {
+                width: 20px;
+            }
+
+            .hdr-name {
+                font-size: 14px;
+            }
+
+            .hdr-status {
+                font-size: 10px;
+            }
+
+            .hdr-btn {
+                padding: 6px 10px;
+                font-size: 11px;
+            }
+
+            /* chat body fills remaining space */
+            .chat-body {
+                flex: 1;
+                height: auto;
+                padding: 14px 12px;
+            }
+
+            /* welcome screen mobile */
+            .welcome-glow {
+                width: 70px;
+                height: 70px;
+                margin-bottom: 10px;
+            }
+
+            .welcome-glow img {
+                width: 36px;
+            }
+
+            .welcome-title {
+                font-size: 18px;
+                margin-bottom: 5px;
+            }
+
+            .welcome-sub {
+                font-size: 12px;
+                margin-bottom: 12px;
+                max-width: 90vw;
+            }
+
+            .chips-row {
+                margin-bottom: 12px;
+                gap: 6px;
+            }
+
+            .chip {
+                font-size: 10.5px;
+                padding: 4px 10px;
+            }
+
+            .welcome-suggestions {
+                gap: 6px;
+                margin-bottom: 14px;
+            }
+
+            .ws-btn {
+                font-size: 11.5px;
+                padding: 6px 12px;
+            }
+
+            .start-btn {
+                font-size: 16px;
+                padding: 13px 36px;
+            }
+
+            /* inline suggestions scroll horizontal */
+            .inline-suggestions {
+                flex-wrap: nowrap;
+                overflow-x: auto;
+                padding-bottom: 4px;
+                padding-left: 0;
+                gap: 6px;
+                -webkit-overflow-scrolling: touch;
+                scrollbar-width: none;
+            }
+
+            .inline-suggestions::-webkit-scrollbar {
+                display: none;
+            }
+
+            .is-btn {
+                font-size: 11.5px;
+                padding: 5px 11px;
+                white-space: nowrap;
+                flex-shrink: 0;
+            }
+
+            /* messages */
+            .msg-col {
+                max-width: 80%;
+            }
+
+            .bubble {
+                font-size: 13px;
+                padding: 9px 12px;
+            }
+
+            /* input */
+            .input-row {
+                padding: 8px 10px;
+            }
+
+            .msg-input {
+                padding: 10px 13px;
+                font-size: 13px;
+            }
+
+            .send-btn {
+                width: 44px;
+                height: 44px;
+                margin-right: 6px;
+            }
+
+            .send-btn svg {
+                width: 19px;
+                height: 19px;
+            }
+
+            /* history panel mobile */
+            .history-panel {
+                border-radius: 0;
+            }
+
+            /* mobile stats bar — shown below header on mobile */
+            .mobile-stats {
+                display: flex;
+                background: rgba(15, 63, 168, 0.95);
+                backdrop-filter: blur(10px);
+                padding: 8px 14px;
+                gap: 0;
+                border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+                overflow-x: auto;
+                scrollbar-width: none;
+            }
+
+            .mobile-stats::-webkit-scrollbar {
+                display: none;
+            }
+
+            .ms-item {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                flex: 1;
+                min-width: 0;
+                padding: 0 6px;
+                border-left: 1px solid rgba(255, 255, 255, 0.12);
+            }
+
+            .ms-item:last-child {
+                border-left: none;
+            }
+
+            .ms-val {
+                font-size: 13px;
+                font-weight: 900;
+                color: #fff;
+                font-variant-numeric: tabular-nums;
+                white-space: nowrap;
+            }
+
+            .ms-label {
+                font-size: 9px;
+                color: rgba(255, 255, 255, 0.55);
+                margin-top: 1px;
+                text-align: center;
+            }
+
+            /* daily tip — compact strip */
+            .mobile-tip {
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                background: linear-gradient(90deg, rgba(30, 111, 255, 0.15), rgba(0, 201, 167, 0.10));
+                border-bottom: 1px solid rgba(30, 111, 255, 0.15);
+                padding: 7px 14px;
+                font-size: 11.5px;
+                color: rgba(255, 255, 255, 0.82);
+                line-height: 1.4;
+            }
+
+            .mobile-tip-icon {
+                font-size: 16px;
+                flex-shrink: 0;
+            }
+        }
+
+        /* hide mobile elements on desktop */
+        .mobile-stats,
+        .mobile-tip {
+            display: none;
         }
 
         ```
@@ -1351,6 +1606,32 @@
 
         <!-- ══ CHAT ══ -->
         <div class="chat-wrap">
+
+            <!-- Mobile Stats Bar (only visible on mobile) -->
+            <div class="mobile-stats" id="mobileStats">
+                <div class="ms-item">
+                    <div class="ms-val" id="m-hb">0</div>
+                    <div class="ms-label">💓 نبضات</div>
+                </div>
+                <div class="ms-item">
+                    <div class="ms-val" id="m-br">0</div>
+                    <div class="ms-label">🌬️ أنفاس</div>
+                </div>
+                <div class="ms-item">
+                    <div class="ms-val">37°C</div>
+                    <div class="ms-label">🌡️ حرارة</div>
+                </div>
+                <div class="ms-item">
+                    <div class="ms-val">120/80</div>
+                    <div class="ms-label">🩸 ضغط</div>
+                </div>
+            </div>
+
+            <!-- Mobile Daily Tip (only visible on mobile) -->
+            <div class="mobile-tip" id="mobileTip">
+                <span class="mobile-tip-icon" id="mTipIcon"></span>
+                <span id="mTipText"></span>
+            </div>
 
             <!-- History Panel -->
             <div class="history-panel" id="historyPanel">
@@ -1501,7 +1782,10 @@
             $('breaths').textContent = br.toLocaleString('ar-SA');
             $('redcells').textContent = rc.toLocaleString('ar-SA');
 
-            // pulse bar
+            // mobile
+            $('m-hb').textContent = hb.toLocaleString('ar-SA');
+            $('m-br').textContent = br.toLocaleString('ar-SA');
+
             const pulse = (Math.sin(elapsed * 1.8) + 1) / 2;
             $('hbBar').style.width = (50 + pulse * 40) + '%';
         }
@@ -1526,6 +1810,9 @@
         $('tipIcon').textContent = tip.icon;
         $('tipText').textContent = tip.text;
         $('tipDate').textContent = today.toLocaleDateString('ar-SA', { weekday: 'long' });
+        // mobile tip (truncated)
+        $('mTipIcon').textContent = tip.icon;
+        $('mTipText').textContent = tip.text.slice(0, 80) + (tip.text.length > 80 ? '…' : '');
 
         /* ═══════════════════════════
            HEALTH QUOTES

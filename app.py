@@ -136,7 +136,8 @@ def get_bot_reply(user_input):
 
 @app.route("/")
 def home():
-    return "✅ البوت شغال على Vercel!"
+    return render_template("index.html")
+
 
 @app.route("/chat", methods=["POST"])
 def chat():

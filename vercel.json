@@ -1,18 +1,7 @@
 {
-    "version": 2,
-    "builds": [
-        {
-            "src": "app.py",
-            "use": "@vercel/python"
-        }
-    ],
     "routes": [
         {
-            "src": "/chat",
-            "dest": "app.py"
-        },
-        {
-            "src": "/",
+            "src": "/api/(.*)",
             "dest": "app.py"
         }
     ]

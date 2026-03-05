@@ -139,8 +139,10 @@ def home():
     return render_template("index.html")
 
 
-@app.route("/chat", methods=["POST"])
+@app.route("/api/chat", methods=["POST"])
 def chat():
     user_input = request.json["message"]
     reply = get_bot_reply(user_input)
     return jsonify({"reply": reply})
+
+handler = app
